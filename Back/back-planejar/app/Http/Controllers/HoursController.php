@@ -18,6 +18,16 @@ class HoursController extends Controller
     {           
         $d1 = $request->input('d1');
         $d2 = $request->input('d2');
+
+        if ($d2 < $d1) {
+            return 'A data de entrada não pode ser antes da de saída.';
+        } elseif($d2 == $d1) {
+            return 'A hora de entrada é a mesma da saída.';
+        //} elseif($d2 - $d1 ) {
+        } else {
+        
+            echo "val";
+        }
     
         return response()->json(['d1' => $d1, 'd2' => $d2]);
     }
