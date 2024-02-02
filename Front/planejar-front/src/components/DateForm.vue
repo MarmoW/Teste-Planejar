@@ -46,7 +46,7 @@
         .then(response => {
           this.responseData = response.data;
           console.log('Form submitted successfully:', response.data);
-          this.updateMessage(response.data);
+          this.updateResponse(response.data);
         })
         .catch(error => {
           if (axios.isAxiosError(error)) {
@@ -56,7 +56,9 @@
           } else {
             console.error('Non-AxiosError:', error);
           }
+
         });
+        
       }
     }
   };

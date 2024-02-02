@@ -8,28 +8,35 @@ use App\Http\Requests\StoreHoursRequest;
 use App\Http\Requests\UpdateHoursRequest;
 use Illuminate\Http\Request;
 use App\Rules\TimestampComparisonRule;
+use Carbon\Carbon;
 
 class HoursController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    
     public function index(Request $request)
     {           
         $d1 = $request->input('d1');
         $d2 = $request->input('d2');
+        $dateTime1 = Carbon::parse($d1);
+        $dateTime2 = Carbon::parse($d2);
 
         if ($d2 < $d1) {
             return 'A data de entrada não pode ser antes da de saída.';
         } elseif($d2 == $d1) {
             return 'A hora de entrada é a mesma da saída.';
-        //} elseif($d2 - $d1 ) {
+        } elseif($dateTime1->diffInMinutes($dateTime2) > 1440) {
+            return 'O expediente não pode passar de 24h';
         } else {
-        
-            echo "";
+
+    
+        $minutesDifference = $dateTime1->diffInMinutes($dateTime2);
+
+        $hours = intdiv($minutesDifference, 60);
+        $minutes = $minutesDifference % 60;
+
+        echo "Passaram: {$hours} horas e {$minutes} minutos";
         }
     
-        return response()->json(['d1' => $d1, 'd2' => $d2]);
     }
 
     /**
