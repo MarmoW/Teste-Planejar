@@ -27,14 +27,35 @@ class HoursController extends Controller
         } elseif($dateTime1->diffInMinutes($dateTime2) > 1440) {
             return 'O expediente não pode passar de 24h';
         } else {
+            $startRange = Carbon::parse('5:00');
+        $endRange = Carbon::parse('21:59');
 
-    
+        $startTime = Carbon::parse($d1);
+        $endTime = Carbon::parse($d2);
+
+        $totalMinutes = 0;
+
+        while ($startTime < $endTime) {
+            if ($startTime->between($startRange, $endRange)) {
+                // If the current time is between 5:00 and 17:00
+                $totalMinutes++;
+            }
+
+            $startTime->addMinute(); // Move to the next minute
+        }
+
+        
         $minutesDifference = $dateTime1->diffInMinutes($dateTime2);
+        $nightMinutes = $minutesDifference - $totalMinutes;
 
-        $hours = intdiv($minutesDifference, 60);
-        $minutes = $minutesDifference % 60;
+        $nightHours = intdiv($nightMinutes, 60);
+        $nightMinutesLeft = $nightMinutes % 60;
 
-        echo "Passaram: {$hours} horas e {$minutes} minutos";
+        $dayHours = intdiv($totalMinutes, 60);
+        $dayMinutesLeft = $totalMinutes % 60;
+        //
+        echo "Foram: Horas noturnas {$nightHours}:{$nightMinutesLeft} e {$dayHours}:{$dayMinutesLeft} horas diurnas.";
+        
         }
     
     }
