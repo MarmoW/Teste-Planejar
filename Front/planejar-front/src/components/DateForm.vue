@@ -14,43 +14,47 @@
         </div>
         <button type="submit">Submit</button>
       </form>
-      <h2>{{ Hours }}</h2>
-    </div>
+      <p>{{ resp }}</p  >
+      </div>
     </div>
   </template>
   
   <script>
   import axios from 'axios';
-  import {ref} from 'vue';
 
-  let Hours = ref([]); 
+  
 
   export default {
     data() {
       return {
+        resp: '',
         formData: {
           d1: 'd1',
-          d2: 'd1'
+          d2: 'd2'
         }
       };
     },
     
+
     methods: {
+      updateResponse(respdata) {
+      // Update the variable when the button is clicked
+      this.resp = respdata;
+  },
       submitForm() {
         axios.post('http://localhost:8000/api/hours', this.formData)
         .then(response => {
           this.responseData = response.data;
           console.log('Form submitted successfully:', response.data);
-          Hours.value = response.data;
+          this.updateMessage(response.data);
         })
         .catch(error => {
           if (axios.isAxiosError(error)) {
             console.error('Erro no Axios:', error);
             console.error('Informação do Erro:', error.response);
-            Hours.value = error.data;
+            
           } else {
             console.error('Non-AxiosError:', error);
-            Hours.value = error.data;
           }
         });
       }
@@ -60,6 +64,11 @@
   </script>
   
   <style scoped>
+  p {
+    font-size: 25px;
+    margin-top: 50px;
+  }
+
   input {
     box-sizing: border-box;
     height: 30px;

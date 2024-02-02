@@ -26,7 +26,7 @@ class HoursController extends Controller
         //} elseif($d2 - $d1 ) {
         } else {
         
-            echo "val";
+            echo "";
         }
     
         return response()->json(['d1' => $d1, 'd2' => $d2]);
