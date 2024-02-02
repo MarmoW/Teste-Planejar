@@ -17,39 +17,52 @@ class HoursController extends Controller
     {           
         $d1 = $request->input('d1');
         $d2 = $request->input('d2');
-        $dateTime1 = Carbon::parse($d1);
-        $dateTime2 = Carbon::parse($d2);
+        $entryTime = Carbon::parse($d1);
+        $leaveTime = Carbon::parse($d2);
 
         if ($d2 < $d1) {
             return 'A data de entrada não pode ser antes da de saída.';
         } elseif($d2 == $d1) {
             return 'A hora de entrada é a mesma da saída.';
-        } elseif($dateTime1->diffInMinutes($dateTime2) > 1440) {
+        } elseif($entryTime->diffInMinutes($leaveTime) > 1440) {
             return 'O expediente não pode passar de 24h';
         } else {
 
         $startRange = Carbon::parse('5:00');
-        $endRange = Carbon::parse('21:59');
+        $endRange = Carbon::parse('22:00');
+        
         $startTime = Carbon::parse($d1);
 
-        $minutesDifferenceTotal = $dateTime1->diffInMinutes($dateTime2);
-        $totalDailyMinutes = 0;
-
-        while ($startTime <= $dateTime2)  {
-        
-            if ($startTime->between($startRange, $endRange)) {
+        $minutesDifferenceTotal = $entryTime->diffInMinutes($leaveTime);
+        $totalDailyMinutes = 0  ;
+        $i = 0;
+        $day = 0;
+    
+         while ($i < $minutesDifferenceTotal)  {
+            if ($startTime->greaterThan($startRange) && $startTime->lessThan($endRange))  {
                 $totalDailyMinutes++;
             }
+            elseif($startTime->greaterThan($startRange) && $startTime->lessThanOrEqualTo($leaveTime) && $day > 0 ){
+                $totalDailyMinutes++;
+            }else{}
             
-            $startTime->addMinute();         
-        }
-        
+            if ($startTime->hour == 4 && $startTime->minute == 59) {
+                $day++;
+                $startTime->setTime(5, 0);  
+            }
+
+            $startTime->addMinute(); 
+            $i++;
+            
+        } 
+
         $nightMinutes = $minutesDifferenceTotal - $totalDailyMinutes;
 
-        if($nightMinutes >= 420){
+         if($nightMinutes >= 420){
             $totalDailyMinutes = $minutesDifferenceTotal - 420;
             $nightMinutes = 420;
-        }
+        }   
+       
 
         $nightHours = intdiv($nightMinutes, 60);
         $nightMinutesLeft = $nightMinutes % 60;

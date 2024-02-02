@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",
+    "dotenv-webpack": "^8.0.1",
     "vue": "^3.2.13"
   },
   "devDependencies": {
