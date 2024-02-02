@@ -27,34 +27,40 @@ class HoursController extends Controller
         } elseif($dateTime1->diffInMinutes($dateTime2) > 1440) {
             return 'O expediente não pode passar de 24h';
         } else {
-            $startRange = Carbon::parse('5:00');
+
+        $startRange = Carbon::parse('5:00');
         $endRange = Carbon::parse('21:59');
-
         $startTime = Carbon::parse($d1);
-        $endTime = Carbon::parse($d2);
 
-        $totalMinutes = 0;
+        $minutesDifferenceTotal = $dateTime1->diffInMinutes($dateTime2);
+        $totalDailyMinutes = 0;
 
-        while ($startTime < $endTime) {
-            if ($startTime->between($startRange, $endRange)) {
-                // If the current time is between 5:00 and 17:00
-                $totalMinutes++;
-            }
-
-            $startTime->addMinute(); // Move to the next minute
-        }
-
+        while ($startTime <= $dateTime2)  {
         
-        $minutesDifference = $dateTime1->diffInMinutes($dateTime2);
-        $nightMinutes = $minutesDifference - $totalMinutes;
+            if ($startTime->between($startRange, $endRange)) {
+                $totalDailyMinutes++;
+            }
+            
+            $startTime->addMinute();         
+        }
+        
+        $nightMinutes = $minutesDifferenceTotal - $totalDailyMinutes;
+
+        if($nightMinutes >= 420){
+            $totalDailyMinutes = $minutesDifferenceTotal - 420;
+            $nightMinutes = 420;
+        }
 
         $nightHours = intdiv($nightMinutes, 60);
         $nightMinutesLeft = $nightMinutes % 60;
 
-        $dayHours = intdiv($totalMinutes, 60);
-        $dayMinutesLeft = $totalMinutes % 60;
-        //
-        echo "Foram: Horas noturnas {$nightHours}:{$nightMinutesLeft} e {$dayHours}:{$dayMinutesLeft} horas diurnas.";
+        $dayHours = intdiv($totalDailyMinutes, 60);
+        $dayMinutesLeft = $totalDailyMinutes % 60;
+       
+        $dayMinutesLeftTwoDigits = sprintf("%02d", $dayMinutesLeft);
+        $nightMinutesLeftTwoDigits = sprintf("%02d", $nightMinutesLeft);
+
+        echo "Foram: Horas diurnas {$dayHours}:{$dayMinutesLeftTwoDigits} e {$nightHours}:{$nightMinutesLeftTwoDigits} horas noturnas.";
         
         }
     
